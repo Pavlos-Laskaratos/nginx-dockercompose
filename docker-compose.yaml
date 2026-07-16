@@ -1,0 +1,96 @@
+name: reverseproxy
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: reverseproxy-nginx
+    configs:
+      - source: nginx.conf
+        target: /etc/nginx/nginx.conf
+    volumes:
+      - sites-available:/etc/nginx/sites-available:ro 
+      - sites-enabled:/etc/nginx/sites-enabled:ro 
+      - conf.d:/etc/nginx/conf.d:ro 
+      - ssl:/etc/nginx/ssl:ro 
+      - acme-challenge:/var/www/html
+      - letsencrypt:/etc/letsencrypt:ro 
+    networks:
+      - nginx
+    ports:
+      - "80:80"
+      - "443:443"
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway" # This allows the container to resolve "host.docker.internal" to the host's gateway.
+    healthcheck: 
+      test: ["CMD", "service", "nginx" , "status" ]
+      interval: 30s
+      timeout: 3s 
+      retries: 3 
+
+  certbot:
+    image: certbot:0.1
+    container_name: reverseproxy-certbot
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - acme-challenge:/var/www/html
+    networks:
+      - certbot
+
+volumes:
+  sites-available:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/reverseproxy/sites-available
+    labels:
+      xyz.laskaratos.reverseproxy.description: "Sites available for nginx forwarding activation"
+  sites-enabled:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/reverseproxy/sites-enabled
+    labels:
+      xyz.laskaratos.reverseproxy.description: "Sites enabled that nginx is forwarding"
+  conf.d:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/reverseproxy/conf.d
+    labels:
+      xyz.laskaratos.reverseproxy.description: "Sites that nginx is forwarding"
+  ssl:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind 
+      device: /srv/data/reverseproxy/ssl
+    labels:
+      xyz.laskaratos.reverseproxy.description: "SSL certificates for HTTPs authentation manually created"
+  letsencrypt: 
+    labels:
+      xyz.laskaratos.reverseproxy.description: "Letsencrypt SSL certificates obtained by certbot"
+  acme-challenge:
+    labels:
+      xyz.laskaratos.reverseproxy.description: "acme-challenge volume for domain name ownership"
+
+
+networks:
+  nginx:
+    name: reverseproxy_nginx
+    attachable: true 
+    driver: bridge
+    labels:
+      xyz.laskaratos.reverseproxy.description: "Nginx cross container network container network"
+  certbot:
+    attachable: false
+    driver: bridge
+    labels:
+      xyz.laskaratos.reverseproxy.description: "Certbot private network"
+
+configs:
+  nginx.conf:
+    file: /srv/configs/reverseproxy/nginx.conf
+
