@@ -21,6 +21,7 @@ services:
       - "443:443"
 #    extra_hosts:
 #      - "host.docker.internal:host-gateway" # This allows the container to resolve "host.docker.internal" to the host's gateway.
+    restart: unless-stopped
     healthcheck: 
       test: ["CMD", "service", "nginx" , "status" ]
       interval: 30s
@@ -35,6 +36,7 @@ services:
       - acme-challenge:/var/www/html
     networks:
       - certbot
+    restart: unless-stopped
 
 volumes:
   sites-available:
