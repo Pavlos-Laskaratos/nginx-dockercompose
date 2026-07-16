@@ -17,8 +17,8 @@ services:
     networks:
       - nginx
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+#      - "443:443"
 #    extra_hosts:
 #      - "host.docker.internal:host-gateway" # This allows the container to resolve "host.docker.internal" to the host's gateway.
     restart: unless-stopped
@@ -29,7 +29,7 @@ services:
       retries: 3 
 
   certbot:
-    image: certbot:0.1
+    image: pavlosla/certbot:0.1
     container_name: reverseproxy-certbot
     volumes:
       - letsencrypt:/etc/letsencrypt

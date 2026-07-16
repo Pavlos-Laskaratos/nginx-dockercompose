@@ -96,3 +96,11 @@ sudo -u dockeruser docker exec -it reverseproxy-certbot certbot renew
 
 It is the responsibility of the user to periodically renew the certificates and to reload nginx with the possible newer certificates.
 
+# Troubleshooting
+Sometimes a get a problem with certificate issuance. This usually resolves by manually creating the acme-challenge directory inside the docker volume.
+
+```
+sudo -u dockeruser docker exec -it <nginx-container> bash
+mkdir -p /var/www/html/.well-known/acme-challenge
+```
+
