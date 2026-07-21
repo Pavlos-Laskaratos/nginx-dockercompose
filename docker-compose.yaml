@@ -17,10 +17,10 @@ services:
     networks:
       - nginx-network
     ports:
-      - "8080:80"
+      - "80:80"
       - "443:443"
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway" # This allows the container to resolve "host.docker.internal" to the host's gateway.
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # This allows the container to resolve "host.docker.internal" to the host's gateway.
     restart: unless-stopped
     healthcheck: 
       test: ["CMD", "service", "nginx" , "status" ]
