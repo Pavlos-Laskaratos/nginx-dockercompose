@@ -39,19 +39,19 @@ git clone https://github.com/Pavlos-Laskaratos/nginx-dockercompose.git
 
 You should now see the `docker-compose.yaml` and this file in your local machine. Before starting the containers the following directories must be created.
 ```bash
-mkdir /srv/configs/reverseproxy
-mkdir /srv/data/reverseproxy/conf.d
-mkdir /srv/data/reverseproxy/sites-enabled
-mkdir /srv/data/reverseproxy/sites-available
-mkdir /srv/data/reverseproxy/ssl
-chown -R dockeruser:admins /srv/data/reverseproxy /srv/configs/reverseproxy
-chmod -R 770 /srv/data/reverseproxy /srv/configs/reverseproxy
+mkdir /srv/configs/nginx
+mkdir /srv/data/nginx/conf.d
+mkdir /srv/data/nginx/sites-enabled
+mkdir /srv/data/nginx/sites-available
+mkdir /srv/data/nginx/ssl
+chown -R dockeruser:admin /srv/data/nginx /srv/configs/nginx
+chmod -R 770 /srv/data/nginx /srv/configs/nginx
 ```
 
 The default `nginx.conf` must be manually created because otherwise it would be left empty without the nginx process being able to initialiaze it since the `config` volume will be read only immediately.
 
 ```bash
-cd /srv/configs/reverseproxy
+cd /srv/configs/nginx
 sudo -u dockeruser docker run --rm nginx:latest cat /etc/nginx/nginx.conf | sudo tee nginx.conf > /dev/null           
 ```
 
@@ -59,7 +59,7 @@ sudo -u dockeruser docker run --rm nginx:latest cat /etc/nginx/nginx.conf | sudo
 At this moment we can compose up as the `dockeruser`
 
 ```bash
-cd /srv/docker/reverseproxy
+cd /srv/docker/nginx
 sudo -u dockeruser docker compose up -d
 ```
 
